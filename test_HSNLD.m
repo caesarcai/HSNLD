@@ -1,15 +1,15 @@
 close all
 clear all
 addpath('PROPACK')
-rng(1000)
+rng(0)
 n = 2^16 - 1;             % dimension, n = n1+n2-1 s.t. n1=n2
-r = 10;                   % rank
-sample_rate = 0.01;       % 1% sample rate
-m = ceil(sample_rate*n); 
+r = 10;                   % rank 10
+sample_rate = 0.1;        % 10% sample rate
+m = ceil(sample_rate*n);  % number of samples
 alpha = 0.1;              % 10% outlier
-k = round(alpha*m);
-c = 5;
-condition_number = 100;
+k = round(alpha*m);       % number of outliers
+c = 5;                    % outlier magnitude
+condition_number = 100;   % condition number 100
 
 freq_seed = randperm(n+3, r)/(n+3); % For off-grid
 sigma_star = linspace(1, 1/condition_number, r);
@@ -32,4 +32,12 @@ eta = 0.5;
 [x,err,timer] = HSNLD(obs,n,r,M,alpha,eta,gamma_init,gamma_decay,proj,tol,max_iter);
 
 recovery_err = norm(ox-x)/norm(ox)
+
+figure
+plot(1:length(timer(1:end,1)),err(1:end,1),'*-');
+grid on
+legend('HSNLD');
+ylabel('Relative Error');
+xlabel('Iteration Number');
+set(gca,'YScale', 'log')
 
